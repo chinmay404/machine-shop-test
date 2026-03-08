@@ -1,0 +1,40 @@
+import { STORE_TYPES } from '../constants/kanbanConfig';
+
+export const mockStores = [
+  {
+    id: 'KANBAN-ALPHA',
+    code: 'KBN-A',
+    name: 'Kanban Store Alpha',
+    type: STORE_TYPES.KANBAN,
+    plant: 'Plant 1',
+    shop: 'Machining Shop A',
+    zone: 'North Corridor',
+    coverageDays: 3,
+    lineIds: ['LINE-HMC-90A', 'LINE-HMC-90B'],
+    sharedAcrossLines: true,
+  },
+  {
+    id: 'KANBAN-BETA',
+    code: 'KBN-B',
+    name: 'Kanban Store Beta',
+    type: STORE_TYPES.KANBAN,
+    plant: 'Plant 1',
+    shop: 'Machining Shop B',
+    zone: 'VMC East Bay',
+    coverageDays: 3,
+    lineIds: ['LINE-VMC-400', 'LINE-VMC-402'],
+    sharedAcrossLines: true,
+  },
+  {
+    id: 'KANBAN-GAMMA',
+    code: 'KBN-G',
+    name: 'Kanban Store Gamma',
+    type: STORE_TYPES.KANBAN,
+    plant: 'Plant 2',
+    shop: 'Turning Shop',
+    zone: 'Turn Mill South',
+    coverageDays: 3,
+    lineIds: ['LINE-TURN-201', 'LINE-TURN-202'],
+    sharedAcrossLines: false,
+  },
+];

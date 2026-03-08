@@ -1,0 +1,156 @@
+const baseMapping = {
+  storeType: 'KANBAN',
+  futureRefillSource: 'SATELLITE_STORE',
+  backupRefillSource: 'BLACK_STORE',
+  centralRefillSource: 'CENTRAL_STORE',
+};
+
+export const mockStockItems = [
+  {
+    id: 'STK-001', skuCode: 'INS-CNMG-120408-PM', itemName: 'CNMG 120408-PM', description: 'P25 carbide insert for rough OD turning', categoryId: 'inserts', uom: 'pcs',
+    storeId: 'KANBAN-ALPHA', lineId: 'LINE-HMC-90A', binId: 'A1-01', rackLocation: 'Rack A1 / Bin 01',
+    currentStock: 182, reservedStock: 20, minStock: 80, maxStock: 260, targetStock: 210, reorderPoint: 110, criticalThreshold: 35, avgDailyConsumption: 52,
+    lastReceivedQty: 120, lastReceivedAt: '2026-03-05T09:15:00', lastIssuedQty: 48, lastIssuedAt: '2026-03-07T07:55:00', pendingReceiptQty: 0, remarks: 'Shared roughing insert for HMC pair.',
+  },
+  {
+    id: 'STK-002', skuCode: 'INS-WNMG-080408-HM', itemName: 'WNMG 080408-HM', description: 'Heat resistant insert for interrupted cuts', categoryId: 'inserts', uom: 'pcs',
+    storeId: 'KANBAN-ALPHA', lineId: 'LINE-HMC-90B', binId: 'A1-02', rackLocation: 'Rack A1 / Bin 02',
+    currentStock: 76, reservedStock: 8, minStock: 70, maxStock: 210, targetStock: 165, reorderPoint: 90, criticalThreshold: 28, avgDailyConsumption: 34,
+    lastReceivedQty: 80, lastReceivedAt: '2026-03-04T10:10:00', lastIssuedQty: 24, lastIssuedAt: '2026-03-07T08:05:00', pendingReceiptQty: 0, remarks: 'Low after setup change on HMC-90-B.',
+  },
+  {
+    id: 'STK-003', skuCode: 'INS-SNMG-120408-GM', itemName: 'SNMG 120408-GM', description: 'Square insert used on heavy roughing tools', categoryId: 'inserts', uom: 'pcs',
+    storeId: 'KANBAN-GAMMA', lineId: 'LINE-TURN-201', binId: 'G2-03', rackLocation: 'Rack G2 / Bin 03',
+    currentStock: 18, reservedStock: 6, minStock: 70, maxStock: 240, targetStock: 180, reorderPoint: 82, criticalThreshold: 20, avgDailyConsumption: 26,
+    lastReceivedQty: 60, lastReceivedAt: '2026-03-02T12:45:00', lastIssuedQty: 22, lastIssuedAt: '2026-03-07T08:20:00', pendingReceiptQty: 0, remarks: 'Critical on turn mill spindle 1.',
+  },
+  {
+    id: 'STK-004', skuCode: 'INS-VNMG-160404-FM', itemName: 'VNMG 160404-FM', description: 'Finishing insert for profiling cycle', categoryId: 'inserts', uom: 'pcs',
+    storeId: 'KANBAN-GAMMA', lineId: 'LINE-TURN-202', binId: 'G2-04', rackLocation: 'Rack G2 / Bin 04',
+    currentStock: 0, reservedStock: 0, minStock: 36, maxStock: 120, targetStock: 84, reorderPoint: 40, criticalThreshold: 10, avgDailyConsumption: 14,
+    lastReceivedQty: 50, lastReceivedAt: '2026-03-01T16:20:00', lastIssuedQty: 12, lastIssuedAt: '2026-03-06T18:05:00', pendingReceiptQty: 0, remarks: 'Stockout after weekend batch.',
+  },
+  {
+    id: 'STK-005', skuCode: 'DRL-0121-5XD', itemName: 'Drill Dia 12.1', description: '5xD carbide drill for spindle housing', categoryId: 'drills', uom: 'nos',
+    storeId: 'KANBAN-ALPHA', lineId: 'LINE-HMC-90A', binId: 'A2-01', rackLocation: 'Rack A2 / Bin 01',
+    currentStock: 18, reservedStock: 2, minStock: 8, maxStock: 28, targetStock: 21, reorderPoint: 10, criticalThreshold: 3, avgDailyConsumption: 4.2,
+    lastReceivedQty: 12, lastReceivedAt: '2026-03-06T11:00:00', lastIssuedQty: 2, lastIssuedAt: '2026-03-07T05:40:00', pendingReceiptQty: 0, remarks: 'Healthy but monitored for extended shift.',
+  },
+  {
+    id: 'STK-006', skuCode: 'DRL-0185-5XD', itemName: 'Drill Dia 18.5', description: 'Through coolant carbide drill 5xD', categoryId: 'drills', uom: 'nos',
+    storeId: 'KANBAN-BETA', lineId: 'LINE-VMC-400', binId: 'B1-01', rackLocation: 'Rack B1 / Bin 01',
+    currentStock: 7, reservedStock: 1, minStock: 6, maxStock: 22, targetStock: 15, reorderPoint: 8, criticalThreshold: 2, avgDailyConsumption: 3.4,
+    lastReceivedQty: 8, lastReceivedAt: '2026-03-05T14:30:00', lastIssuedQty: 1, lastIssuedAt: '2026-03-07T07:10:00', pendingReceiptQty: 0, remarks: 'Below target after rush order.',
+  },
+  {
+    id: 'STK-007', skuCode: 'DRL-0240-3XD', itemName: 'Drill Dia 24.0', description: '3xD indexable drill for manifold block', categoryId: 'drills', uom: 'nos',
+    storeId: 'KANBAN-BETA', lineId: 'LINE-VMC-402', binId: 'B1-02', rackLocation: 'Rack B1 / Bin 02',
+    currentStock: 6, reservedStock: 1, minStock: 6, maxStock: 18, targetStock: 12, reorderPoint: 7, criticalThreshold: 2, avgDailyConsumption: 2.1,
+    lastReceivedQty: 4, lastReceivedAt: '2026-03-04T09:25:00', lastIssuedQty: 1, lastIssuedAt: '2026-03-07T06:15:00', pendingReceiptQty: 6, remarks: 'Pending refill raised from satellite store.',
+  },
+  {
+    id: 'STK-008', skuCode: 'EM-0100-4FL-TIALN', itemName: 'End Mill Dia 10', description: '4 flute TiAlN coated end mill', categoryId: 'end-mills', uom: 'nos',
+    storeId: 'KANBAN-BETA', lineId: 'LINE-VMC-400', binId: 'B2-01', rackLocation: 'Rack B2 / Bin 01',
+    currentStock: 23, reservedStock: 4, minStock: 10, maxStock: 30, targetStock: 24, reorderPoint: 12, criticalThreshold: 4, avgDailyConsumption: 5.6,
+    lastReceivedQty: 12, lastReceivedAt: '2026-03-05T13:00:00', lastIssuedQty: 3, lastIssuedAt: '2026-03-07T05:30:00', pendingReceiptQty: 0, remarks: 'Standard contouring tool.',
+  },
+  {
+    id: 'STK-009', skuCode: 'EM-0160-4FL-ALCR', itemName: 'End Mill Dia 16', description: 'AlCr coated end mill for steel milling', categoryId: 'end-mills', uom: 'nos',
+    storeId: 'KANBAN-BETA', lineId: 'LINE-VMC-402', binId: 'B2-02', rackLocation: 'Rack B2 / Bin 02',
+    currentStock: 9, reservedStock: 2, minStock: 8, maxStock: 20, targetStock: 15, reorderPoint: 9, criticalThreshold: 3, avgDailyConsumption: 4.4,
+    lastReceivedQty: 8, lastReceivedAt: '2026-03-03T10:45:00', lastIssuedQty: 2, lastIssuedAt: '2026-03-07T07:00:00', pendingReceiptQty: 0, remarks: 'Low with second shift demand.',
+  },
+  {
+    id: 'STK-010', skuCode: 'EM-0200-5FL-HPC', itemName: 'End Mill Dia 20', description: '5 flute HPC cutter for rough milling', categoryId: 'end-mills', uom: 'nos',
+    storeId: 'KANBAN-ALPHA', lineId: 'LINE-HMC-90B', binId: 'A2-05', rackLocation: 'Rack A2 / Bin 05',
+    currentStock: 2, reservedStock: 1, minStock: 5, maxStock: 15, targetStock: 11, reorderPoint: 6, criticalThreshold: 2, avgDailyConsumption: 2.8,
+    lastReceivedQty: 4, lastReceivedAt: '2026-03-02T18:10:00', lastIssuedQty: 1, lastIssuedAt: '2026-03-07T06:45:00', pendingReceiptQty: 0, remarks: 'Critical after insert pocket rework.',
+  },
+  {
+    id: 'STK-011', skuCode: 'TAP-M08-1.25-HSSE', itemName: 'Tap M8 x 1.25', description: 'HSSE machine tap for bracket line', categoryId: 'taps', uom: 'nos',
+    storeId: 'KANBAN-BETA', lineId: 'LINE-VMC-400', binId: 'B3-01', rackLocation: 'Rack B3 / Bin 01',
+    currentStock: 16, reservedStock: 2, minStock: 6, maxStock: 18, targetStock: 15, reorderPoint: 8, criticalThreshold: 2, avgDailyConsumption: 3.1,
+    lastReceivedQty: 10, lastReceivedAt: '2026-03-06T09:15:00', lastIssuedQty: 1, lastIssuedAt: '2026-03-07T05:20:00', pendingReceiptQty: 0, remarks: 'Healthy and stable usage.',
+  },
+  {
+    id: 'STK-012', skuCode: 'TAP-M12-1.75-PM', itemName: 'Tap M12 x 1.75', description: 'Powder metal tap for housing thread', categoryId: 'taps', uom: 'nos',
+    storeId: 'KANBAN-BETA', lineId: 'LINE-VMC-402', binId: 'B3-02', rackLocation: 'Rack B3 / Bin 02',
+    currentStock: 0, reservedStock: 0, minStock: 5, maxStock: 15, targetStock: 12, reorderPoint: 6, criticalThreshold: 2, avgDailyConsumption: 2.2,
+    lastReceivedQty: 6, lastReceivedAt: '2026-03-02T15:10:00', lastIssuedQty: 2, lastIssuedAt: '2026-03-06T22:45:00', pendingReceiptQty: 4, remarks: 'Receipt expected today noon.',
+  },
+  {
+    id: 'STK-013', skuCode: 'BOR-025-SCLCR', itemName: 'Boring Bar 25', description: 'SCLCR boring bar for internal turning', categoryId: 'special-tools', uom: 'nos',
+    storeId: 'KANBAN-GAMMA', lineId: 'LINE-TURN-201', binId: 'G1-01', rackLocation: 'Rack G1 / Bin 01',
+    currentStock: 3, reservedStock: 1, minStock: 3, maxStock: 8, targetStock: 6, reorderPoint: 4, criticalThreshold: 1, avgDailyConsumption: 1.2,
+    lastReceivedQty: 2, lastReceivedAt: '2026-03-01T14:00:00', lastIssuedQty: 1, lastIssuedAt: '2026-03-07T08:00:00', pendingReceiptQty: 2, remarks: 'Pending refill open from shop store.',
+  },
+  {
+    id: 'STK-014', skuCode: 'BOR-032-DWLNR', itemName: 'Boring Bar 32', description: 'DWLNR finish boring bar', categoryId: 'special-tools', uom: 'nos',
+    storeId: 'KANBAN-GAMMA', lineId: 'LINE-TURN-202', binId: 'G1-02', rackLocation: 'Rack G1 / Bin 02',
+    currentStock: 1, reservedStock: 0, minStock: 2, maxStock: 6, targetStock: 4, reorderPoint: 3, criticalThreshold: 1, avgDailyConsumption: 0.9,
+    lastReceivedQty: 1, lastReceivedAt: '2026-03-01T09:35:00', lastIssuedQty: 1, lastIssuedAt: '2026-03-07T04:50:00', pendingReceiptQty: 0, remarks: 'Critical spare holder status.',
+  },
+  {
+    id: 'STK-015', skuCode: 'HLD-C40-MTJNL-16', itemName: 'Holder C40-MTJNL-16', description: 'External turning holder body', categoryId: 'holders-adaptors', uom: 'nos',
+    storeId: 'KANBAN-GAMMA', lineId: 'LINE-TURN-201', binId: 'G3-01', rackLocation: 'Rack G3 / Bin 01',
+    currentStock: 5, reservedStock: 0, minStock: 2, maxStock: 8, targetStock: 5, reorderPoint: 3, criticalThreshold: 1, avgDailyConsumption: 0.5,
+    lastReceivedQty: 2, lastReceivedAt: '2026-02-27T16:15:00', lastIssuedQty: 0, lastIssuedAt: '2026-03-05T10:45:00', pendingReceiptQty: 0, remarks: 'Service stock with good coverage.',
+  },
+  {
+    id: 'STK-016', skuCode: 'HLD-BT40-ER32-70', itemName: 'Holder BT40 ER32', description: 'Milling collet chuck holder', categoryId: 'holders-adaptors', uom: 'nos',
+    storeId: 'KANBAN-BETA', lineId: 'LINE-VMC-400', binId: 'B4-01', rackLocation: 'Rack B4 / Bin 01',
+    currentStock: 0, reservedStock: 0, minStock: 2, maxStock: 6, targetStock: 4, reorderPoint: 2, criticalThreshold: 1, avgDailyConsumption: 0.7,
+    lastReceivedQty: 1, lastReceivedAt: '2026-02-25T17:10:00', lastIssuedQty: 1, lastIssuedAt: '2026-03-06T13:20:00', pendingReceiptQty: 0, remarks: 'Empty after emergency replacement.',
+  },
+  {
+    id: 'STK-017', skuCode: 'ADP-HSK63A-SLN20', itemName: 'Adaptor HSK63A SLN20', description: 'Shrink-fit adaptor for 20 mm tooling', categoryId: 'holders-adaptors', uom: 'nos',
+    storeId: 'KANBAN-ALPHA', lineId: 'LINE-HMC-90A', binId: 'A3-03', rackLocation: 'Rack A3 / Bin 03',
+    currentStock: 4, reservedStock: 1, minStock: 2, maxStock: 6, targetStock: 4, reorderPoint: 2, criticalThreshold: 1, avgDailyConsumption: 0.6,
+    lastReceivedQty: 2, lastReceivedAt: '2026-03-05T11:10:00', lastIssuedQty: 0, lastIssuedAt: '2026-03-04T14:30:00', pendingReceiptQty: 0, remarks: 'Healthy support stock.',
+  },
+  {
+    id: 'STK-018', skuCode: 'SPC-FORM-TOOL-09', itemName: 'Special Form Tool 09', description: 'Custom grooving profile tool', categoryId: 'special-tools', uom: 'nos',
+    storeId: 'KANBAN-GAMMA', lineId: 'LINE-TURN-202', binId: 'G4-01', rackLocation: 'Rack G4 / Bin 01',
+    currentStock: 2, reservedStock: 0, minStock: 2, maxStock: 4, targetStock: 3, reorderPoint: 2, criticalThreshold: 1, avgDailyConsumption: 0.8,
+    lastReceivedQty: 1, lastReceivedAt: '2026-03-03T08:40:00', lastIssuedQty: 0, lastIssuedAt: '2026-03-06T17:20:00', pendingReceiptQty: 0, remarks: 'Low but not critical.',
+  },
+  {
+    id: 'STK-019', skuCode: 'INS-CNMG-120412-RR', itemName: 'CNMG 120412-RR', description: 'Heavy roughing insert for ductile iron', categoryId: 'inserts', uom: 'pcs',
+    storeId: 'KANBAN-ALPHA', lineId: 'LINE-HMC-90B', binId: 'A1-05', rackLocation: 'Rack A1 / Bin 05',
+    currentStock: 12, reservedStock: 2, minStock: 60, maxStock: 220, targetStock: 170, reorderPoint: 75, criticalThreshold: 18, avgDailyConsumption: 24,
+    lastReceivedQty: 70, lastReceivedAt: '2026-03-02T10:35:00', lastIssuedQty: 16, lastIssuedAt: '2026-03-07T08:10:00', pendingReceiptQty: 0, remarks: 'Critical due to casting batch variation.',
+  },
+  {
+    id: 'STK-020', skuCode: 'INS-TNMG-160408-MR', itemName: 'TNMG 160408-MR', description: 'General purpose insert for finish turning', categoryId: 'inserts', uom: 'pcs',
+    storeId: 'KANBAN-GAMMA', lineId: 'LINE-TURN-201', binId: 'G2-06', rackLocation: 'Rack G2 / Bin 06',
+    currentStock: 96, reservedStock: 10, minStock: 40, maxStock: 160, targetStock: 120, reorderPoint: 55, criticalThreshold: 18, avgDailyConsumption: 18,
+    lastReceivedQty: 80, lastReceivedAt: '2026-03-05T15:25:00', lastIssuedQty: 14, lastIssuedAt: '2026-03-07T06:55:00', pendingReceiptQty: 0, remarks: 'Healthy consumption profile.',
+  },
+  {
+    id: 'STK-021', skuCode: 'DRL-0080-8XD', itemName: 'Drill Dia 8.0', description: '8xD micro drill for oil gallery holes', categoryId: 'drills', uom: 'nos',
+    storeId: 'KANBAN-ALPHA', lineId: 'LINE-HMC-90A', binId: 'A2-08', rackLocation: 'Rack A2 / Bin 08',
+    currentStock: 5, reservedStock: 1, minStock: 4, maxStock: 12, targetStock: 9, reorderPoint: 5, criticalThreshold: 2, avgDailyConsumption: 1.5,
+    lastReceivedQty: 4, lastReceivedAt: '2026-03-03T16:10:00', lastIssuedQty: 1, lastIssuedAt: '2026-03-07T05:55:00', pendingReceiptQty: 4, remarks: 'Pending receipt created by line supervisor.',
+  },
+  {
+    id: 'STK-022', skuCode: 'EM-0060-4FL-MICRO', itemName: 'End Mill Dia 6', description: 'Micro end mill for chamfer slot cleanup', categoryId: 'end-mills', uom: 'nos',
+    storeId: 'KANBAN-BETA', lineId: 'LINE-VMC-402', binId: 'B2-06', rackLocation: 'Rack B2 / Bin 06',
+    currentStock: 5, reservedStock: 1, minStock: 5, maxStock: 14, targetStock: 10, reorderPoint: 6, criticalThreshold: 2, avgDailyConsumption: 2.4,
+    lastReceivedQty: 6, lastReceivedAt: '2026-03-04T12:35:00', lastIssuedQty: 1, lastIssuedAt: '2026-03-07T06:20:00', pendingReceiptQty: 0, remarks: 'Low and below reorder.',
+  },
+  {
+    id: 'STK-023', skuCode: 'TAP-M20-2.50-CPM', itemName: 'Tap M20 x 2.50', description: 'CPM tap for high strength flange thread', categoryId: 'taps', uom: 'nos',
+    storeId: 'KANBAN-GAMMA', lineId: 'LINE-TURN-202', binId: 'G3-05', rackLocation: 'Rack G3 / Bin 05',
+    currentStock: 8, reservedStock: 1, minStock: 3, maxStock: 10, targetStock: 7, reorderPoint: 4, criticalThreshold: 1, avgDailyConsumption: 1.1,
+    lastReceivedQty: 4, lastReceivedAt: '2026-03-06T10:00:00', lastIssuedQty: 0, lastIssuedAt: '2026-03-05T08:30:00', pendingReceiptQty: 0, remarks: 'Healthy specialty tap.',
+  },
+  {
+    id: 'STK-024', skuCode: 'HLD-CAPTO-C6-ER25', itemName: 'Capto C6 ER25 Holder', description: 'Capto holder for turn-mill flexible changeover', categoryId: 'holders-adaptors', uom: 'nos',
+    storeId: 'KANBAN-GAMMA', lineId: 'LINE-TURN-201', binId: 'G3-08', rackLocation: 'Rack G3 / Bin 08',
+    currentStock: 0, reservedStock: 0, minStock: 1, maxStock: 4, targetStock: 3, reorderPoint: 2, criticalThreshold: 1, avgDailyConsumption: 0.4,
+    lastReceivedQty: 1, lastReceivedAt: '2026-02-26T09:20:00', lastIssuedQty: 1, lastIssuedAt: '2026-03-06T09:50:00', pendingReceiptQty: 1, remarks: 'Awaiting refurb return.',
+  },
+].map((item) => ({
+  ...baseMapping,
+  ...item,
+}));
